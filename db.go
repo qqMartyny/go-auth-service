@@ -7,7 +7,7 @@ import (
 
 // initDB инициализирует подключение к PostgreSQL.
 func initDB() (*sql.DB, error) {
-	connStr := "user=postgres password=1209348756 dbname=auth_service_db sslmode=disable"
+	connStr := "host=localhost port=5433 user=postgres password=1209348756 dbname=auth_service_db sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, fmt.Errorf("не удалось открыть соединение с БД: %w", err)
