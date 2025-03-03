@@ -12,7 +12,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	// Импортируем наш репозиторий и основную "модель" (если нужно)
-	mainrepo "github.com/qqMartyny/go-auth-service"
+	"github.com/qqMartyny/go-auth-service/repository"
 )
 
 // Пример секретного ключа
@@ -36,7 +36,7 @@ func RegisterHandler(db *sql.DB) gin.HandlerFunc {
 		}
 
 		// Проверяем, нет ли пользователя с таким email
-		existing, err := mainrepo.FindCustomerByEmail(db, req.Email)
+		existing, err := repository.FindCustomerByEmail(db, req.Email)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка базы данных"})
 			return
@@ -65,14 +65,14 @@ func RegisterHandler(db *sql.DB) gin.HandlerFunc {
 		}
 
 		// Сохраняем нового пользователя
-		newCustomer := &mainrepo.Customer{
+		newCustomer := &repository.Customer{
 			FirstName: req.FirstName,
 			LastName:  req.LastName,
 			BirthDate: birthDate,
 			Email:     req.Email,
 			Password:  string(hashedPassword),
 		}
-		if err := mainrepo.InsertCustomer(db, newCustomer); err != nil {
+		if err := repository.InsertCustomer(db, newCustomer); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка при создании пользователя"})
 			return
 		}
@@ -98,7 +98,7 @@ func LoginHandler(db *sql.DB) gin.HandlerFunc {
 		}
 
 		// Ищем пользователя по email
-		user, err := mainrepo.FindCustomerByEmail(db, req.Email)
+		user, err := repository.FindCustomerByEmail(db, req.Email)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка базы данных"})
 			return
@@ -144,7 +144,7 @@ func GetCustomerHandler(db *sql.DB) gin.HandlerFunc {
 		}
 
 		// Ищем в базе
-		user, err := mainrepo.FindCustomerByID(db, id)
+		user, err := repository.FindCustomerByID(db, id)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Ошибка базы данных"})
 			return
